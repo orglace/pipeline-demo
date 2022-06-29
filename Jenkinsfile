@@ -61,6 +61,12 @@ def stageTagCreation(String currentBranch) {
 }
 
 def createTag(def tag) {
-    
-    sh(script: "git tag -a ${tag} -m 'release/${tag.substring(1)}' && git push --tags")
+
+    echo "Creating/pushing Git tag: ${tag}"
+    sh(script: """
+        git config user.email leeroyjenkins@rccl.com
+        git config user.name leeroy_jenkins
+        git tag -a ${tag} -m 'release/${tag.substring(1)}'
+        git push --tags
+    """)
 }
