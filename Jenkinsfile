@@ -9,6 +9,10 @@ node {
         // **       in the global configuration.
         mvnHome = tool 'M3'
     }
+
+    // Tag Creation Stage
+    stageTagCreation(env.BRANCH_NAME)
+
     stage('Build') {
         // Run the maven build
         withEnv(["MVN_HOME=$mvnHome"]) {
@@ -34,4 +38,13 @@ def stageCheckout(repo, branch) {
     submoduleCfg                     : [],
     userRemoteConfigs                : [[url: repo]]
   ])
+}
+
+def stageTagCreation(String currentBranch) {
+    
+    if(currentBranch.equalsIgnoreCase('master')) {
+        stage('Tag Creation') {
+            echo 'this is stage tag creation'
+        }
+    }
 }
