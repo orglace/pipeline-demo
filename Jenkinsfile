@@ -52,9 +52,15 @@ def stageTagCreation(String currentBranch) {
             echo "Tag existence result: [${tagExist}]"
             if(!tagExist) {
                 echo "Tag ${newTag} must be created on ${currentBranch}"
+                createTag(newTag)
             } else {
                 echo "Tag ${newTag} already exist ${currentBranch}"
             }
         }
     }
+}
+
+def createTag(def tag) {
+    
+    sh(script: "git tag -a ${tag} -m 'release/${tag.substring(1)}' && git push --tags")
 }
