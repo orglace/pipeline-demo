@@ -66,7 +66,7 @@ def createTag(def tag) {
     sh(script: """
         git config user.email leeroyjenkins@rccl.com
         git config user.name leeroy_jenkins
-        git tag -a ${tag} -m 'release/${tag.substring(1)}'
+        git tag -a ${tag} -m release/${tag.substring(1)}
         git push --tags
     """)
 }
