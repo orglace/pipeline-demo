@@ -44,7 +44,11 @@ def stageTagCreation(String currentBranch) {
     
     if(currentBranch.equalsIgnoreCase('master')) {
         stage('Tag Creation') {
-            echo 'this is stage tag creation'
+            newTag = sh(script: 'git log --merges -n1 --format="%b" | grep -o "from release\\/[0-9]\\+\\.[0-9]\\+\\.[0-9]\\+" | sed "s/from release\\//v/"', returnStdout: true)
+            echo "The new tag ${newTag} for ${currentBranch}"
+            if(!newTag) {
+                echo "There is not merge with release branch"
+            }
         }
     }
 }
