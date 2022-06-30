@@ -1,6 +1,6 @@
 node {
     def mvnHome
-    def repoAddress = 'https://github.com/orglace/pipeline-demo.git'
+    def repoAddress = 'git@github.com:orglace/pipeline-demo.git'
     stage('Preparation') { // for display purposes
         // Get some code from a GitHub repository
         stageCheckout(repoAddress, "*/${env.BRANCH_NAME}")
@@ -65,6 +65,7 @@ def createTag(def tag) {
 
     echo "Creating/Pushing Git tag: ${tag}"
     sh(script: """
+        git remote -vv
         git config user.email leeroyjenkins@rccl.com
         git config user.name leeroy_jenkins
         git tag -a ${tag} -m release/${tag.substring(1)}
