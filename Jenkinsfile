@@ -49,7 +49,7 @@ def stageTagCreation(def repo, String currentBranch, credentials) {
                 echo "The new tag ${newTag} for ${currentBranch}"
                 
                 tagExist = sh(script: "git tag -l ${newTag}", returnStdout: true).trim()
-                echo "Tag existence result: [${tagExist}]"
+                echo "Tag existence result: ${tagExist?: 'none'}"
                 if(!tagExist) {
                     echo "Tag ${newTag} must be created on ${currentBranch}"
                     createTag(newTag)
