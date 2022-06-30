@@ -11,7 +11,7 @@ node {
     }
 
     // Tag Creation Stage
-    stageTagCreation(env.BRANCH_NAME)
+    stageTagCreation(repoAddress, env.BRANCH_NAME)
 
     stage('Build') {
         // Run the maven build
