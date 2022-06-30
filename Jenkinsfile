@@ -62,7 +62,10 @@ def stageTagCreation(def repo, String currentBranch, credentials) {
 }
 
 /**
-*/
+ * Create a given tag and push it to the remote repository
+ *
+ * @param tag to be created/pushed
+ */
 def createTag(def tag) {
 
     echo "Creating/Pushing Git tag: ${tag}"
