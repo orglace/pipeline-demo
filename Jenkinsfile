@@ -54,7 +54,7 @@ def stageTagCreation(String currentBranch) {
                 echo "Tag ${newTag} must be created on ${currentBranch}"
                 createTag(newTag)
             } else {
-                echo "Tag ${newTag} already exist ${currentBranch}"
+                echo "Tag ${newTag} already exist on ${currentBranch}"
             }
         }
     }
@@ -67,6 +67,6 @@ def createTag(def tag) {
         git config user.email leeroyjenkins@rccl.com
         git config user.name leeroy_jenkins
         git tag -a ${tag} -m release/${tag.substring(1)}
-        git show ${tag}
+        git push --tags
     """)
 }
