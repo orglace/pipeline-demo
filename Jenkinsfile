@@ -61,6 +61,8 @@ def stageTagCreation(def repo, String currentBranch, credentials) {
     }
 }
 
+/**
+*/
 def createTag(def tag) {
 
     echo "Creating/Pushing Git tag: ${tag}"
