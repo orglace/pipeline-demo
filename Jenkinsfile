@@ -48,7 +48,7 @@ def stageTagCreation(String currentBranch) {
             newTag = sh(script: 'git log --merges -n1 --format="%s %b" | grep -o "from [a-z]*\\/*release\\/[0-9]\\+\\.[0-9]\\+\\.[0-9]\\+" | sed "s/from [a-z]*\\/*release\\//v/"', returnStdout: true).trim()
             echo "The new tag ${newTag} for ${currentBranch}"
             
-            tagExist = sh(script: 'git tag -l "${newTag}"', returnStdout: true).trim()
+            tagExist = sh(script: "git tag -l ${newTag}", returnStdout: true).trim()
             echo "Tag existence result: [${tagExist}]"
             if(!tagExist) {
                 echo "Tag ${newTag} must be created on ${currentBranch}"
