@@ -45,10 +45,10 @@ def stageTagCreation(String currentBranch) {
     if(currentBranch.equalsIgnoreCase('master')) {
         stage('Tag Creation') {
             
-            newTag = sh(script: 'git log --merges -n1 --format="%s %b" | grep -o "from [a-z]*\\/*release\\/[0-9]\\+\\.[0-9]\\+\\.[0-9]\\+" | sed "s/from [a-z]*\\/*release\\//v/"', returnStdout: true)
+            newTag = sh(script: 'git log --merges -n1 --format="%s %b" | grep -o "from [a-z]*\\/*release\\/[0-9]\\+\\.[0-9]\\+\\.[0-9]\\+" | sed "s/from [a-z]*\\/*release\\//v/"', returnStdout: true).trim()
             echo "The new tag ${newTag} for ${currentBranch}"
             
-            tagExist = sh(script: 'git tag -l "${newTag}"', returnStdout: true)
+            tagExist = sh(script: 'git tag -l "${newTag}"', returnStdout: true).trim()
             echo "Tag existence result: [${tagExist}]"
             if(!tagExist) {
                 echo "Tag ${newTag} must be created on ${currentBranch}"
@@ -66,7 +66,7 @@ def createTag(def tag) {
     sh(script: """
         git config user.email leeroyjenkins@rccl.com
         git config user.name leeroy_jenkins
-        git tag -a \"${tag}\" -m release/1.0.0
-        git tag
+        git tag -a ${tag} -m release/${tag.substring(1)}
+        git show ${tag}
     """)
 }
