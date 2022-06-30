@@ -45,7 +45,7 @@ def stageTagCreation(String currentBranch) {
     if(currentBranch.equalsIgnoreCase('master')) {
         stage('Tag Creation') {
             
-            newTag = sh(script: 'git log --merges -n1 --format="%s %b" | grep -o "from [a-z]*\\/*release\\/[0-9]\\+\\.[0-9]\\+\\.[0-9]\\+" | sed "s/from [a-z]*\\/*release\\//v/"', returnStdout: true).trim()
+            newTag = sh(script: 'git log --merges -n1 --format="%s%n%b" | grep -m 1 -o "from [a-z]*\\/*release\\/[0-9]\\+\\.[0-9]\\+\\.[0-9]\\+" | sed "s/from [a-z]*\\/*release\\//v/"', returnStdout: true).trim()
             echo "The new tag ${newTag} for ${currentBranch}"
             
             tagExist = sh(script: "git tag -l ${newTag}", returnStdout: true).trim()
