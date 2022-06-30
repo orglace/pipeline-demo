@@ -46,15 +46,15 @@ def stageTagCreation(def repo, String currentBranch, credentials) {
         stage('Tag Creation') {
             sshagent(credentials: [credentials]) {
                 newTag = sh(script: 'git log --merges -n1 --format="%s%n%b" | grep -m 1 -o "from [a-z]*\\/*release\\/[0-9]\\+\\.[0-9]\\+\\.[0-9]\\+" | sed "s/from [a-z]*\\/*release\\//v/"', returnStdout: true).trim()
-                echo "The new tag ${newTag} for ${currentBranch}"
+                echo "Prospective tag to be pushed: ${newTag}"
                 
                 tagExist = sh(script: "git tag -l ${newTag}", returnStdout: true).trim()
-                echo "Tag existence result: ${tagExist?: 'none'}"
+                echo "Tag ${newTag} already exist: ${tagExist? 'yes': 'no'}"
                 if(!tagExist) {
-                    echo "Tag ${newTag} must be created on ${currentBranch}"
+                    echo "Tag ${newTag} must be created/pushed"
                     createTag(newTag)
                 } else {
-                    echo "Tag ${newTag} already exist on ${currentBranch}"
+                    echo "Tag ${newTag} no need to be created/pushed"
                 }
             }
         }
