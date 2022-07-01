@@ -3,6 +3,7 @@ node {
     def repoAddress = 'git@github.com:orglace/pipeline-demo.git'
     stage('Preparation') { // for display purposes
         // Get some code from a GitHub repository
+        cleanWs()
         stageCheckout(repoAddress, "*/${env.BRANCH_NAME}", 'leeroy-jenkins-ssh')
         // Get the Maven tool.
         // ** NOTE: This 'M3' Maven tool must be configured
