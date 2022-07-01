@@ -41,7 +41,7 @@ def stageCheckout(repo, branch, credentials) {
 }
 
 def stageTagCreation(def repo, String currentBranch, credentials) {
-    if(currentBranch.equalsIgnoreCase('master')) {
+    if(currentBranch.equalsIgnoreCase('develop')) {
 
         stage('Tag Creation') {
             sshagent(credentials: [credentials]) {
