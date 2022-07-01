@@ -1,9 +1,9 @@
 node {
     def mvnHome
-    def repoAddress = 'https://github.com/orglace/pipeline-demo.git'
+    def repoAddress = 'git@github.com:orglace/pipeline-demo.git'
     stage('Preparation') { // for display purposes
         // Get some code from a GitHub repository
-        stageCheckout(repoAddress, "*/${env.BRANCH_NAME}")
+        stageCheckout(repoAddress, "*/${env.BRANCH_NAME}", 'leeroy-jenkins-ssh')
         // Get the Maven tool.
         // ** NOTE: This 'M3' Maven tool must be configured
         // **       in the global configuration.
@@ -11,7 +11,7 @@ node {
     }
 
     // Tag Creation Stage
-    stageTagCreation(env.BRANCH_NAME)
+    stageTagCreation(repoAddress, env.BRANCH_NAME, 'leeroy-jenkins-ssh')
 
     stage('Build') {
         // Run the maven build
@@ -29,40 +29,50 @@ node {
     }
 }
 
-def stageCheckout(repo, branch) {
+def stageCheckout(repo, branch, credentials) {
   checkout([
     $class                           : 'GitSCM',
     branches                         : [[name: branch]],
     doGenerateSubmoduleConfigurations: false,
     extensions                       : [[$class: 'CleanCheckout']],
     submoduleCfg                     : [],
-    userRemoteConfigs                : [[url: repo]]
+    userRemoteConfigs                : [[credentialsId: credentials, url: repo]]
   ])
 }
 
-def stageTagCreation(String currentBranch) {
-    
+def stageTagCreation(def repo, String currentBranch, credentials) {
     if(currentBranch.equalsIgnoreCase('master')) {
+
         stage('Tag Creation') {
-            
-            newTag = sh(script: 'git log --merges -n1 --format="%s %b" | grep -o "from [a-z]*\\/*release\\/[0-9]\\+\\.[0-9]\\+\\.[0-9]\\+" | sed "s/from [a-z]*\\/*release\\//v/"', returnStdout: true).trim()
-            echo "The new tag ${newTag} for ${currentBranch}"
-            
-            tagExist = sh(script: "git tag -l ${newTag}", returnStdout: true).trim()
-            echo "Tag existence result: [${tagExist}]"
-            if(!tagExist) {
-                echo "Tag ${newTag} must be created on ${currentBranch}"
-                createTag(newTag)
-            } else {
-                echo "Tag ${newTag} already exist on ${currentBranch}"
+            sshagent(credentials: [credentials]) {
+                newTag = sh(script: 'git log --merges -n1 --format="%s%n%b" | grep -m 1 -o "from [a-z]*\\/*release\\/[0-9]\\+\\.[0-9]\\+\\.[0-9]\\+" | sed "s/from [a-z]*\\/*release\\//v/"', returnStdout: true).trim()
+                if(newTag) {
+                    echo "Prospective tag to be created/pushed: ${newTag}"
+                    
+                    tagExist = sh(script: "git tag -l ${newTag}", returnStdout: true).trim()
+                    echo "Tag ${newTag} already exist: ${tagExist? 'yes': 'no'}"
+                    if(!tagExist) {
+                        echo "Tag ${newTag} must be created/pushed"
+                        createTag(newTag)
+                    } else {
+                        echo "Tag ${newTag} no need to be created/pushed"
+                    }
+                } else {
+                    echo "There is not tag to be created/pushed"
+                }
             }
         }
     }
 }
 
+/**
+ * Create a given tag and push it to the remote repository
+ *
+ * @param tag to be created/pushed
+ */
 def createTag(def tag) {
 
-    echo "Creating/pushing Git tag: ${tag}"
+    echo "Creating/Pushing Git tag: ${tag}"
     sh(script: """
         git config user.email leeroyjenkins@rccl.com
         git config user.name leeroy_jenkins
