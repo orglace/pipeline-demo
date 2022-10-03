@@ -78,6 +78,6 @@ def createTag(def tag) {
         git config user.email leeroyjenkins@rccl.com
         git config user.name leeroy_jenkins
         git tag -a ${tag} -m release/${tag.substring(1)}
-        git push --tags
+        git push origin ${tag}
     """)
 }
